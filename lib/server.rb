@@ -1,5 +1,3 @@
-require 'socket'
-
 require_relative 'socket_factory'
 
 class Server
@@ -16,12 +14,11 @@ class Server
 
   def run
     client, addr_info = @socket.accept
-    client.puts "Hello!"
-    client.puts "Time is #{Time.now}"
+    client.puts 'Echo Server'
     loop do
-      sleep(1)
-      @x ||= 0
-      client.puts @x += 1
+      str = client.gets.chomp
+      client.puts str
+      @killed = true if str.match(/^exit$/)
       break if @killed
     end
   ensure
