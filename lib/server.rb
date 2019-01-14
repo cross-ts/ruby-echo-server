@@ -1,5 +1,7 @@
 require 'socket'
 
+require_relative 'socket_factory'
+
 class Server
   class << self
     def run
@@ -9,7 +11,7 @@ class Server
 
   def initialize
     Signal.trap('INT') { @killed = true }
-    @socket = create_server_socket
+    @socket = SocketFactory.generate(:tcp)
   end
 
   def run
@@ -25,15 +27,5 @@ class Server
   ensure
     @socket.close
     client.close
-  end
-
-  private
-
-  def create_server_socket
-    socket = Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0)
-    sock_addr = Socket.sockaddr_in(2000, '0.0.0.0')
-    socket.bind(sock_addr)
-    socket.listen(1)
-    socket
   end
 end
